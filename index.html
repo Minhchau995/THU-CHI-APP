@@ -1,0 +1,2105 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1224" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Thu/Chi Pro" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <link rel="manifest" href="manifest.json" />
+  <title>Thu/Chi Pro</title>
+
+  <style>
+    :root{
+      --bg:#070b18;
+      --panel:#0d1630;
+      --panel2:#0b1224;
+      --card:#0f1b3a;
+      --text:#e9eefc;
+      --muted:#9fb0d0;
+      --line:rgba(255,255,255,.08);
+      --good:#33d17a;
+      --bad:#ff5c7a;
+      --accent:#6aa7ff;
+      --warn:#ffce5c;
+
+      --r12:12px;
+      --r16:16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(106,167,255,.25), transparent 55%),
+                  radial-gradient(900px 600px at 100% 10%, rgba(51,209,122,.14), transparent 55%),
+                  radial-gradient(800px 700px at 50% 120%, rgba(255,92,122,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      overflow-x:hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    a{color:inherit}
+    button,input,select{font:inherit}
+    .safe{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* SPLASH */
+    #splash{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(160deg, #0b1224 0%, #070b18 55%, #071022 100%);
+      z-index:9999;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    #splash.hide{opacity:0; pointer-events:none; transform: scale(1.02)}
+    .sbox{
+      width:min(420px, 92vw);
+      padding:22px;
+      border:1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(13,22,48,.55);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      text-align:center;
+    }
+    .logo{
+      width:56px;height:56px;
+      margin:0 auto 10px;
+      border-radius:18px;
+      background: linear-gradient(135deg, rgba(106,167,255,.95), rgba(51,209,122,.85));
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      position:relative;
+    }
+    .logo:after{
+      content:"₫";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; font-size:26px;
+      color:#06112b;
+    }
+    .hello{
+      margin-top:10px;
+      font-weight:1000;
+      font-size:24px;
+      letter-spacing:.3px;
+      line-height:1.15;
+    }
+    .hello small{
+      display:block;
+      margin-top:6px;
+      font-size:12px;
+      font-weight:700;
+      color:var(--muted);
+    }
+    .spin{
+      margin:14px auto 0;
+      width:28px;height:28px;border-radius:999px;
+      border:3px solid rgba(255,255,255,.14);
+      border-top-color: rgba(106,167,255,.95);
+      animation: rot 1s linear infinite;
+    }
+    @keyframes rot{to{transform:rotate(360deg)}}
+
+    /* LAYOUT */
+    .app{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px 14px 92px;
+    }
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      padding: 6px 2px 10px;
+      position:sticky; top:0;
+      background: linear-gradient(180deg, rgba(7,11,24,.95), rgba(7,11,24,.55), transparent);
+      backdrop-filter: blur(10px);
+      z-index:5;
+    }
+    .hleft{display:flex; align-items:center; gap:10px}
+    .hlogo{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  overflow:hidden;
+  background:#0b1224;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  flex:0 0 auto;
+  }
+
+  .hlogo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+    .htitle{line-height:1.05}
+    .htitle .t1{font-weight:900; font-size:16px}
+    .htitle .t2{color:var(--muted); font-size:12px}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(13,22,48,.55);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      max-width: 52vw;
+    }
+    .pill select{
+      background: transparent;
+      border:0; color: var(--text);
+      outline:none;
+      max-width: 34vw;
+    }
+    .pill small{color:var(--muted)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 12px;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+      .pill{max-width: 64vw}
+      .pill select{max-width: 44vw}
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      background: rgba(13,22,48,.60);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel .ph{
+      padding:14px 14px 10px;
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,27,58,.55), transparent);
+    }
+    .ph h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .ph .sub{color:var(--muted); font-size:12px}
+    .pc{padding:12px 14px 14px}
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .cards{grid-template-columns:1fr}
+    }
+    .card{
+      padding:12px;
+      border-radius: var(--r16);
+      border:1px solid var(--line);
+      background: rgba(15,27,58,.52);
+      box-shadow: 0 10px 22px rgba(0,0,0,.22);
+      min-width:0;
+    }
+    .card .k{color:var(--muted); font-size:12px}
+    .card .v{
+      margin-top:6px;
+      font-weight:900;
+      font-size:18px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .v.good{color:var(--good)}
+    .v.bad{color:var(--bad)}
+    .v.accent{color:var(--accent)}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(15,27,58,.55);
+      color: var(--text);
+      padding: 11px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      box-shadow: 0 10px 20px rgba(0,0,0,.22);
+      transition: transform .06s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+      max-width:100%;
+    }
+    .btn:active{transform: scale(.98)}
+    .btn.primary{
+      border-color: rgba(106,167,255,.45);
+      background: linear-gradient(135deg, rgba(106,167,255,.25), rgba(15,27,58,.55));
+    }
+    .btn.danger{
+      border-color: rgba(255,92,122,.40);
+      background: linear-gradient(135deg, rgba(255,92,122,.16), rgba(15,27,58,.55));
+    }
+    .btn.ghost{
+      background: transparent;
+    }
+    .btn small{color:var(--muted)}
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(7,11,24,.35);
+      color: var(--muted);
+      font-size:12px;
+      max-width:100%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .chip strong{color:var(--text)}
+    .sep{height:1px;background:var(--line); margin:12px 0}
+
+    /* Lists */
+    .list{display:flex; flex-direction:column; gap:8px}
+    .item{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+      border:1px solid var(--line);
+      background: rgba(15,27,58,.45);
+      border-radius: 16px;
+      padding: 10px 10px;
+      min-width:0;
+    }
+    .item .left{min-width:0}
+    .item .title{
+      font-weight:800;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 62vw;
+    }
+    .item .meta{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .item .amt{
+      font-weight:900;
+      font-size:13px;
+      white-space:nowrap;
+      margin-left:10px;
+    }
+    .amt.in{color:var(--good)}
+    .amt.out{color:var(--bad)}
+    .icon{
+      width:34px;height:34px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid var(--line);
+      background: rgba(7,11,24,.35);
+      flex:0 0 auto;
+      color: var(--accent);
+      font-weight:900;
+    }
+
+    /* Bottom nav */
+    .bnav{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent, rgba(7,11,24,.85), rgba(7,11,24,.98));
+      backdrop-filter: blur(10px);
+      z-index:10;
+    }
+    .tabs{
+      max-width: 980px;
+      margin: 0 auto;
+      border:1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(13,22,48,.65);
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .tab{
+      border:0;
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 10px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.1px;
+    }
+    .tab.active{
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(106,167,255,.18), rgba(15,27,58,.25));
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding: 16px 12px calc(16px + env(safe-area-inset-bottom));
+      z-index:9998;
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width: min(720px, 100%);
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(13,22,48,.92);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sheet .sh{
+      padding: 12px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(180deg, rgba(15,27,58,.55), transparent);
+    }
+    .sheet .sh h3{margin:0;font-size:14px}
+    .sheet .sc{padding: 12px 14px 14px}
+    .fgrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .fgrid{grid-template-columns:1fr}
+    }
+    label{display:block; font-size:12px; color: var(--muted); margin: 0 0 6px}
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(7,11,24,.35);
+      color: var(--text);
+      padding: 11px 12px;
+      border-radius: 14px;
+      outline:none;
+    }
+    textarea{min-height:84px; resize:none}
+    .right{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap}
+
+    .toast{
+      position:fixed;
+      left:50%; transform: translateX(-50%);
+      bottom: 90px;
+      padding: 10px 12px;
+      background: rgba(13,22,48,.92);
+      border:1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      color: var(--text);
+      font-weight:800;
+      font-size: 13px;
+      display:none;
+      z-index:9999;
+      max-width: 92vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{display:block}
+
+    /* QR */
+    .qrBox{
+      margin-top:10px;
+      border:1px solid var(--line);
+      background: rgba(7,11,24,.35);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .qrCanvasWrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 0;
+    }
+    #qrCanvas{
+      width: 240px;
+      height: 240px;
+      border-radius: 14px;
+      background: #fff;
+    }
+    .qrHint{
+      font-size:12px;
+      color: var(--muted);
+      margin-top:6px;
+      line-height:1.35;
+    }
+    .scanWrap{
+      display:none;
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(7,11,24,.35);
+    }
+    .scanWrap.show{display:block}
+    #scanVideo{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#000;
+    }
+
+    .muted{color:var(--muted)}
+    .mono{font-variant-numeric: tabular-nums; font-feature-settings:"tnum" 1}
+  </style>
+</head>
+
+<body class="safe">
+  <!-- Splash -->
+  <div id="splash" aria-hidden="true">
+  <div class="sbox">
+
+    <!-- Ảnh con gái -->
+    <div class="splash-avatar">
+      <img src="./icon-512.png" alt="Bún" />
+    </div>
+
+    <!-- Chữ chào -->
+    <div class="hello">
+      Hello Bún 💕
+      <small>Chúc con yêu một ngày vui ✨</small>
+    </div>
+
+    <div class="muted" style="font-size:12px; margin-top:10px;">
+      Thu/Chi Pro • PWA • Dữ liệu cục bộ
+    </div>
+
+    <div class="spin"></div>
+  </div>
+</div>
+
+  <div class="app">
+    <header>
+      <div class="hleft">
+        <div class="hlogo">
+      <img src="./icon-512.png" alt="avatar" />
+      </div>
+
+        <div class="htitle">
+          <div class="t1">Thu/Chi Pro</div>
+          <div class="t2" id="subtitle">Quản lý theo tháng • Dữ liệu cục bộ</div>
+        </div>
+      </div>
+
+      <div class="pill">
+        <small>Kỳ xem</small>
+        <select id="rangeSelect" aria-label="Chọn số tháng">
+          <option value="1">1 tháng</option>
+          <option value="2">2 tháng</option>
+          <option value="3">3 tháng</option>
+          <option value="6">6 tháng</option>
+          <option value="12">12 tháng</option>
+          <option value="0">Tất cả</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- VIEW: DASH -->
+    <section id="viewDash" class="grid">
+      <div class="panel">
+        <div class="ph">
+          <div>
+            <h2>Tổng quan</h2>
+            <div class="sub" id="periodText">—</div>
+          </div>
+          <div class="row">
+            <button class="btn primary" id="btnAdd">+ Thêm giao dịch</button>
+            <button class="btn" id="btnCats">Danh mục</button>
+          </div>
+        </div>
+
+        <div class="pc">
+          <div class="cards">
+            <div class="card">
+              <div class="k">Tổng Thu</div>
+              <div class="v good mono" id="sumIn">0</div>
+            </div>
+            <div class="card">
+              <div class="k">Tổng Chi</div>
+              <div class="v bad mono" id="sumOut">0</div>
+            </div>
+            <div class="card">
+              <div class="k">Lãi/Lỗ</div>
+              <div class="v accent mono" id="sumNet">0</div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row" style="justify-content:space-between">
+            <div class="chip">Gia đình: <strong id="familyName">Mặc định</strong></div>
+            <div class="row">
+              <button class="btn ghost" id="btnFamily">Đổi gia đình</button>
+              <button class="btn" id="btnBackup">Xuất/Nhập</button>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row" style="justify-content:space-between; align-items:flex-end">
+            <div>
+              <h2 style="margin:0;font-size:14px">Tổng thu/chi theo ngày</h2>
+              <div class="sub">Xem ngày đó đã chi gì / lãi lỗ bao nhiêu</div>
+            </div>
+            <div class="row">
+              <span class="chip">Hôm nay: <strong id="todayText">—</strong></span>
+            </div>
+          </div>
+
+          <div style="margin-top:10px" class="list" id="dailyList"></div>
+          <div class="muted" id="dailyEmpty" style="display:none; padding:10px 2px;">Chưa có dữ liệu trong kỳ xem.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">
+          <div>
+            <h2>Gần đây</h2>
+            <div class="sub">5 giao dịch mới nhất</div>
+          </div>
+          <button class="btn ghost" id="btnToAll">Xem tất cả</button>
+        </div>
+        <div class="pc">
+          <div class="list" id="recentList"></div>
+          <div class="muted" id="recentEmpty" style="display:none; padding:10px 2px;">Chưa có giao dịch nào.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: TOP -->
+    <section id="viewTop" style="display:none">
+      <div class="panel">
+        <div class="ph">
+          <div>
+            <h2>Top những chi tiêu</h2>
+            <div class="sub">Theo danh mục (chỉ tính CHI)</div>
+          </div>
+          <div class="row">
+            <span class="chip">Kỳ xem: <strong id="topPeriod">—</strong></span>
+          </div>
+        </div>
+        <div class="pc">
+          <div class="list" id="topList"></div>
+          <div class="muted" id="topEmpty" style="display:none; padding:10px 2px;">Chưa có khoản chi trong kỳ xem.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: TX -->
+    <section id="viewTx" style="display:none">
+      <div class="panel">
+        <div class="ph">
+          <div>
+            <h2>Chi tiết giao dịch</h2>
+            <div class="sub">Bao gồm ngày giờ thực hiện</div>
+          </div>
+          <div class="row">
+            <select id="filterType" aria-label="Lọc loại">
+              <option value="all">Tất cả</option>
+              <option value="in">Thu</option>
+              <option value="out">Chi</option>
+            </select>
+            <button class="btn" id="btnClearPeriod">Xóa dữ liệu kỳ xem</button>
+          </div>
+        </div>
+        <div class="pc">
+          <div class="row" style="justify-content:space-between">
+            <span class="chip">Tổng: <strong id="txCount">0</strong> giao dịch</span>
+            <span class="chip">Lọc: <strong id="txFilterText">Tất cả</strong></span>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="list" id="txList"></div>
+          <div class="muted" id="txEmpty" style="display:none; padding:10px 2px;">Chưa có giao dịch nào trong kỳ xem.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom tabs -->
+  <div class="bnav">
+    <div class="tabs">
+      <button class="tab active" data-tab="dash">Tổng quan</button>
+      <button class="tab" data-tab="top">Top Chi</button>
+      <button class="tab" data-tab="tx">Giao dịch</button>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Transaction -->
+  <div class="modal" id="modalTx">
+    <div class="sheet">
+      <div class="sh">
+        <h3 id="txTitle">Thêm giao dịch</h3>
+        <button class="btn ghost" id="txClose">Đóng</button>
+      </div>
+      <div class="sc">
+        <div class="fgrid">
+          <div>
+            <label>Loại</label>
+            <select id="txType">
+              <option value="in">THU</option>
+              <option value="out">CHI</option>
+            </select>
+          </div>
+          <div>
+            <label>Số tiền (VND)</label>
+            <input id="txAmount" type="text" inputmode="numeric" placeholder="Ví dụ: 100.000" />
+          </div>
+          <div>
+            <label>Danh mục</label>
+            <select id="txCat"></select>
+          </div>
+          <div>
+            <label>Thời gian</label>
+            <input id="txTime" type="datetime-local" />
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label>Ghi chú (tuỳ chọn)</label>
+          <textarea id="txNote" placeholder="Ví dụ: ăn trưa, đổ xăng..."></textarea>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="right">
+          <button class="btn danger" id="txDelete" style="display:none">Xóa</button>
+          <button class="btn" id="txCancel">Hủy</button>
+          <button class="btn primary" id="txSave">Lưu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Categories -->
+  <div class="modal" id="modalCats">
+    <div class="sheet">
+      <div class="sh">
+        <h3>Danh mục (THU và CHI tách riêng)</h3>
+        <button class="btn ghost" id="catsClose">Đóng</button>
+      </div>
+      <div class="sc">
+        <div class="fgrid">
+          <div class="panel" style="border-radius:18px">
+            <div class="ph">
+              <div>
+                <h2>Danh mục THU</h2>
+                <div class="sub">Ví dụ: Lương, Thưởng...</div>
+              </div>
+              <button class="btn primary" id="addCatIn">+ Thêm</button>
+            </div>
+            <div class="pc">
+              <div class="list" id="catInList"></div>
+            </div>
+          </div>
+
+          <div class="panel" style="border-radius:18px">
+            <div class="ph">
+              <div>
+                <h2>Danh mục CHI</h2>
+                <div class="sub">Ví dụ: Ăn uống, Sinh hoạt...</div>
+              </div>
+              <button class="btn primary" id="addCatOut">+ Thêm</button>
+            </div>
+            <div class="pc">
+              <div class="list" id="catOutList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="muted" style="font-size:12px">
+          * Bạn có thể xóa danh mục. Nếu danh mục đã có giao dịch, app sẽ giữ giao dịch và chỉ đổi nhãn sang “(đã xóa)”.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Family -->
+  <div class="modal" id="modalFamily">
+    <div class="sheet">
+      <div class="sh">
+        <h3>Gia đình / Nhóm dữ liệu</h3>
+        <button class="btn ghost" id="familyClose">Đóng</button>
+      </div>
+      <div class="sc">
+        <div class="muted" style="font-size:12px; margin-bottom:8px">
+          Mỗi “Gia đình” là một bộ dữ liệu riêng. Bạn có thể tạo nhiều nhóm (ví dụ: Nhà, Công việc).
+        </div>
+        <div class="fgrid">
+          <div>
+            <label>Chọn gia đình</label>
+            <select id="familySelect"></select>
+          </div>
+          <div>
+            <label>Tạo gia đình mới</label>
+            <div class="row" style="gap:8px; flex-wrap:nowrap">
+              <input id="familyNew" placeholder="Ví dụ: Nhà Minh Thái" />
+              <button class="btn primary" id="familyCreate">Tạo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="right">
+          <button class="btn danger" id="familyDelete">Xóa gia đình</button>
+          <button class="btn primary" id="familyUse">Dùng gia đình này</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Backup (BỔ SUNG: Xuất/Nhập + QR nhanh) -->
+  <div class="modal" id="modalBackup">
+    <div class="sheet">
+      <div class="sh">
+        <h3>Xuất / Nhập dữ liệu (đồng bộ thủ công)</h3>
+        <button class="btn ghost" id="backupClose">Đóng</button>
+      </div>
+      <div class="sc">
+        <div class="muted" style="font-size:12px">
+          App vẫn OFFLINE. Bạn có thể xuất file JSON để lưu/đưa cho người thân.
+          <br/>BỔ SUNG: Bạn có thể tạo <b>QR</b> để chuyển nhanh (thiết bị khác quét QR để nhập).
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <button class="btn primary" id="btnExport">Xuất file dữ liệu gia đình hiện tại</button>
+          <label class="btn" for="importFile" style="cursor:pointer">Nhập dữ liệu từ file</label>
+          <input id="importFile" type="file" accept="application/json" hidden />
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- QR QUICK -->
+        <div class="row">
+          <button class="btn primary" id="btnMakeQR">Tạo QR để nhập nhanh</button>
+          <button class="btn" id="btnScanQR">Quét QR để nhập</button>
+          <button class="btn ghost" id="btnStopScan" style="display:none">Tắt quét</button>
+        </div>
+
+        <div class="qrBox" id="qrBox" style="display:none">
+          <div class="qrCanvasWrap">
+            <canvas id="qrCanvas" width="240" height="240"></canvas>
+          </div>
+          <div class="qrHint">
+            Thiết bị khác mở <b>Xuất/Nhập</b> → <b>Quét QR</b> để nhập.
+            <br/><span class="muted">Lưu ý: QR chỉ hợp lý khi dữ liệu không quá lớn. Nếu dữ liệu nhiều, hãy dùng “Xuất file”.</span>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="btnCopyQRText">Copy mã QR</button>
+            <button class="btn danger" id="btnHideQR">Ẩn QR</button>
+          </div>
+        </div>
+
+        <div class="scanWrap" id="scanWrap">
+          <video id="scanVideo" playsinline muted></video>
+        </div>
+
+        <div class="muted" id="scanHint" style="display:none; font-size:12px; margin-top:8px;">
+          Nếu máy không hỗ trợ quét QR, bạn vẫn có thể “Nhập dữ liệu từ file”.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="muted" style="font-size:12px">
+          * Nhập sẽ <b>ghi đè</b> dữ liệu của gia đình đang chọn (để đồng bộ cho khớp). Bạn có thể tạo gia đình mới trước rồi nhập vào.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /***********************
+     * Utilities
+     ***********************/
+    const $ = (s, r=document)=>r.querySelector(s);
+    const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+
+    const fmtVND = (n)=>{
+      const x = Math.round(Number(n||0));
+      return x.toLocaleString("vi-VN") + " ₫";
+    };
+    const pad2 = (n)=>String(n).padStart(2,"0");
+    const toLocalInputValue = (d)=>{
+      const dt = new Date(d);
+      return dt.getFullYear()+"-"+pad2(dt.getMonth()+1)+"-"+pad2(dt.getDate())+"T"+pad2(dt.getHours())+":"+pad2(dt.getMinutes());
+    };
+    const fromLocalInputValue = (v)=>{
+      return new Date(v).getTime();
+    };
+    const dayKey = (ts)=>{
+      const d = new Date(ts);
+      return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+    };
+    const formatDateTime = (ts)=>{
+      const d = new Date(ts);
+      return pad2(d.getDate())+"/"+pad2(d.getMonth()+1)+"/"+d.getFullYear()+" • "+pad2(d.getHours())+":"+pad2(d.getMinutes());
+    };
+    const formatDateOnly = (key)=>{
+      const [y,m,d]=key.split("-");
+      return d+"/"+m+"/"+y;
+    };
+
+    let toastTimer=null;
+    function toast(msg){
+      const t = $("#toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    /***********************
+     * IndexedDB (offline)
+     ***********************/
+    const DB_NAME = "thuchi_offline_pwa_v1";
+    const DB_VER  = 1;
+
+    let db=null;
+
+    function idbOpen(){
+      return new Promise((res, rej)=>{
+        const req = indexedDB.open(DB_NAME, DB_VER);
+        req.onupgradeneeded = (e)=>{
+          const d = req.result;
+          if(!d.objectStoreNames.contains("families")){
+            const s = d.createObjectStore("families", { keyPath:"id" });
+            s.createIndex("by_name","name",{unique:false});
+          }
+          if(!d.objectStoreNames.contains("categories")){
+            const s = d.createObjectStore("categories", { keyPath:"id" });
+            s.createIndex("by_family","familyId",{unique:false});
+            s.createIndex("by_family_type", ["familyId","type"], {unique:false});
+          }
+          if(!d.objectStoreNames.contains("transactions")){
+            const s = d.createObjectStore("transactions", { keyPath:"id" });
+            s.createIndex("by_family","familyId",{unique:false});
+            s.createIndex("by_family_time", ["familyId","time"], {unique:false});
+            s.createIndex("by_family_type_time", ["familyId","type","time"], {unique:false});
+          }
+          if(!d.objectStoreNames.contains("settings")){
+            d.createObjectStore("settings", { keyPath:"key" });
+          }
+        };
+        req.onsuccess = ()=>res(req.result);
+        req.onerror = ()=>rej(req.error);
+      });
+    }
+
+    function tx(store, mode="readonly"){
+      const t = db.transaction(store, mode);
+      return [t.objectStore(store), t];
+    }
+
+    const uid = ()=> (crypto?.randomUUID ? crypto.randomUUID() : ("id_"+Date.now()+"_"+Math.random().toString(16).slice(2)));
+
+    async function getSetting(key, fallback=null){
+      const [s] = tx("settings");
+      return new Promise((res)=>{
+        const r = s.get(key);
+        r.onsuccess = ()=>res(r.result?.value ?? fallback);
+        r.onerror = ()=>res(fallback);
+      });
+    }
+    async function setSetting(key, value){
+      const [s, t] = tx("settings","readwrite");
+      s.put({key, value});
+      return new Promise((res, rej)=>{
+        t.oncomplete=()=>res(true);
+        t.onerror=()=>rej(t.error);
+      });
+    }
+
+    async function listFamilies(){
+      const [s] = tx("families");
+      return new Promise((res)=>{
+        const r = s.getAll();
+        r.onsuccess = ()=>res(r.result||[]);
+        r.onerror = ()=>res([]);
+      });
+    }
+    async function upsertFamily(f){
+      const [s,t]=tx("families","readwrite");
+      s.put(f);
+      return new Promise((res,rej)=>{t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);});
+    }
+    async function deleteFamily(familyId){
+      await deleteAllByFamily("categories", familyId);
+      await deleteAllByFamily("transactions", familyId);
+
+      const [s,t]=tx("families","readwrite");
+      s.delete(familyId);
+      return new Promise((res,rej)=>{t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);});
+    }
+
+    async function deleteAllByFamily(storeName, familyId){
+      const [s,t]=tx(storeName,"readwrite");
+      const idx = s.index("by_family");
+      const range = IDBKeyRange.only(familyId);
+      return new Promise((res,rej)=>{
+        const req = idx.openCursor(range);
+        req.onsuccess = (e)=>{
+          const cur = e.target.result;
+          if(cur){ cur.delete(); cur.continue(); }
+        };
+        t.oncomplete=()=>res(true);
+        t.onerror=()=>rej(t.error);
+      });
+    }
+
+    async function listCategories(familyId, type){
+      const [s]=tx("categories");
+      const idx = s.index("by_family_type");
+      const range = IDBKeyRange.only([familyId,type]);
+      return new Promise((res)=>{
+        const out=[];
+        idx.openCursor(range).onsuccess = (e)=>{
+          const cur=e.target.result;
+          if(cur){ out.push(cur.value); cur.continue(); }
+          else res(out.sort((a,b)=>a.name.localeCompare(b.name,"vi")));
+        };
+      });
+    }
+    async function upsertCategory(c){
+      const [s,t]=tx("categories","readwrite");
+      s.put(c);
+      return new Promise((res,rej)=>{t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);});
+    }
+
+    async function listTransactionsInPeriod(familyId, startTs, endTs){
+      const [s]=tx("transactions");
+      const idx = s.index("by_family_time");
+      const range = IDBKeyRange.bound([familyId, startTs], [familyId, endTs], false, true);
+      return new Promise((res)=>{
+        const out=[];
+        idx.openCursor(range, "prev").onsuccess = (e)=>{
+          const cur=e.target.result;
+          if(cur){ out.push(cur.value); cur.continue(); }
+          else res(out);
+        };
+      });
+    }
+
+    async function upsertTx(obj){
+      const [s,t]=tx("transactions","readwrite");
+      s.put(obj);
+      return new Promise((res,rej)=>{t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);});
+    }
+    async function deleteTx(id){
+      const [s,t]=tx("transactions","readwrite");
+      s.delete(id);
+      return new Promise((res,rej)=>{t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);});
+    }
+
+    /***********************
+     * App State
+     ***********************/
+    let state = {
+      familyId: null,
+      familyName: "Mặc định",
+      rangeMonths: 1,
+      catsIn: [],
+      catsOut: [],
+      txs: [],
+      filterType: "all",
+      editingTxId: null
+    };
+
+    function periodBounds(rangeMonths){
+      const now = new Date();
+      const end = new Date(now.getFullYear(), now.getMonth()+1, 1).getTime();
+      if(rangeMonths === 0){
+        return { start: 0, end };
+      }
+      const startMonth = now.getMonth() - (rangeMonths - 1);
+      const start = new Date(now.getFullYear(), startMonth, 1).getTime();
+      return { start, end };
+    }
+
+    function periodLabel(rangeMonths){
+      const now = new Date();
+      const mm = pad2(now.getMonth()+1);
+      const yy = now.getFullYear();
+      if(rangeMonths === 1) return `Tháng ${mm}/${yy}`;
+      if(rangeMonths === 0) return `Tất cả (đến ${mm}/${yy})`;
+      return `Từ ${rangeMonths} tháng gần nhất (đến ${mm}/${yy})`;
+    }
+
+    async function ensureDefaults(familyId){
+      const inList = await listCategories(familyId, "in");
+      const outList = await listCategories(familyId, "out");
+
+      if(inList.length === 0){
+        const seed = ["Tiền lương","Thưởng","Bán hàng","Thu khác"];
+        for(const name of seed){
+          await upsertCategory({id:uid(), familyId, type:"in", name, deleted:false});
+        }
+      }
+      if(outList.length === 0){
+        const seed = ["Tiền ăn","Tiền sinh hoạt","Tiền công việc","Đi lại","Mua sắm","Chi khác"];
+        for(const name of seed){
+          await upsertCategory({id:uid(), familyId, type:"out", name, deleted:false});
+        }
+      }
+    }
+
+    async function loadAll(){
+      let fams = await listFamilies();
+      if(fams.length === 0){
+        const f = { id: uid(), name:"Mặc định", createdAt: Date.now() };
+        await upsertFamily(f);
+        fams = [f];
+      }
+
+      const savedFamilyId = await getSetting("active_family_id", fams[0].id);
+      const savedRange = await getSetting("range_months", 1);
+
+      state.familyId = fams.some(x=>x.id===savedFamilyId) ? savedFamilyId : fams[0].id;
+      state.rangeMonths = Number(savedRange);
+
+      const fam = fams.find(x=>x.id===state.familyId) || fams[0];
+      state.familyName = fam.name;
+
+      await ensureDefaults(state.familyId);
+
+      state.catsIn = await listCategories(state.familyId, "in");
+      state.catsOut = await listCategories(state.familyId, "out");
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      renderAll();
+    }
+
+    /***********************
+     * Rendering
+     ***********************/
+    function sumByType(txs){
+      let sin=0, sout=0;
+      for(const t of txs){
+        if(t.type==="in") sin += Number(t.amount||0);
+        else sout += Number(t.amount||0);
+      }
+      return {sin, sout, net: sin - sout};
+    }
+
+    function renderHeader(){
+      $("#familyName").textContent = state.familyName;
+      $("#rangeSelect").value = String(state.rangeMonths);
+      $("#periodText").textContent = periodLabel(state.rangeMonths);
+      $("#topPeriod").textContent = periodLabel(state.rangeMonths);
+
+      const d = new Date();
+      $("#todayText").textContent = pad2(d.getDate())+"/"+pad2(d.getMonth()+1)+"/"+d.getFullYear();
+
+      const {sin, sout, net} = sumByType(state.txs);
+      $("#sumIn").textContent = fmtVND(sin);
+      $("#sumOut").textContent = fmtVND(sout);
+      const netEl = $("#sumNet");
+      netEl.textContent = fmtVND(net);
+      netEl.classList.remove("good","bad","accent");
+      if(net>0) netEl.classList.add("good");
+      else if(net<0) netEl.classList.add("bad");
+      else netEl.classList.add("accent");
+    }
+
+    function renderDaily(){
+      const map = new Map();
+      for(const t of state.txs){
+        const k = dayKey(t.time);
+        if(!map.has(k)) map.set(k, {in:0,out:0,count:0});
+        const o = map.get(k);
+        if(t.type==="in") o.in += Number(t.amount||0);
+        else o.out += Number(t.amount||0);
+        o.count++;
+      }
+      const keys = Array.from(map.keys()).sort().reverse();
+      const wrap = $("#dailyList");
+      wrap.innerHTML = "";
+      $("#dailyEmpty").style.display = keys.length ? "none" : "block";
+
+      for(const k of keys){
+        const o = map.get(k);
+        const net = o.in - o.out;
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="left">
+            <div class="title">${formatDateOnly(k)} • <span class="muted">${o.count} giao dịch</span></div>
+            <div class="meta">
+              <span>Thu: <b class="mono" style="color:var(--good)">${fmtVND(o.in)}</b></span>
+              <span>Chi: <b class="mono" style="color:var(--bad)">${fmtVND(o.out)}</b></span>
+              <span>Lãi/Lỗ: <b class="mono" style="color:${net>0?'var(--good)':net<0?'var(--bad)':'var(--accent)'}">${fmtVND(net)}</b></span>
+            </div>
+          </div>
+          <div class="amt ${net>=0?'in':'out'} mono">${net>=0?'+':''}${fmtVND(net)}</div>
+        `;
+        el.addEventListener("click", ()=>{
+          showTab("tx");
+          renderTxList({onlyDayKey:k});
+          toast("Đang lọc theo ngày " + formatDateOnly(k));
+        });
+        wrap.appendChild(el);
+      }
+    }
+
+    function renderRecent(){
+      const wrap = $("#recentList");
+      wrap.innerHTML = "";
+      const recent = state.txs.slice(0,5);
+      $("#recentEmpty").style.display = recent.length ? "none" : "block";
+
+      for(const t of recent){
+        wrap.appendChild(txRow(t));
+      }
+    }
+
+    function getCatName(type, id){
+      const list = type==="in" ? state.catsIn : state.catsOut;
+      const x = list.find(c=>c.id===id);
+      if(x && !x.deleted) return x.name;
+      if(x && x.deleted) return x.name + " (đã xóa)";
+      return "(đã xóa)";
+    }
+
+    function txRow(t){
+      const el = document.createElement("div");
+      el.className = "item";
+      const ico = t.type==="in" ? "↑" : "↓";
+      const amtClass = t.type==="in" ? "in" : "out";
+      const catName = getCatName(t.type, t.categoryId);
+      el.innerHTML = `
+        <div class="row" style="flex-wrap:nowrap; gap:10px; min-width:0; align-items:flex-start">
+          <div class="icon">${ico}</div>
+          <div class="left" style="min-width:0">
+            <div class="title">${catName}</div>
+            <div class="meta">
+              <span>${formatDateTime(t.time)}</span>
+              ${t.note ? `<span>• ${escapeHtml(t.note)}</span>` : ``}
+            </div>
+          </div>
+        </div>
+        <div class="amt ${amtClass} mono">${t.type==="in"?'+':'-'}${fmtVND(t.amount)}</div>
+      `;
+      el.addEventListener("click", ()=> openTxModal(t));
+      return el;
+    }
+
+    function renderTop(){
+      const sums = new Map();
+      for(const t of state.txs){
+        if(t.type!=="out") continue;
+        sums.set(t.categoryId, (sums.get(t.categoryId)||0) + Number(t.amount||0));
+      }
+      const rows = Array.from(sums.entries())
+        .map(([catId, amt])=>({catId, amt}))
+        .sort((a,b)=>b.amt-a.amt);
+
+      const wrap = $("#topList");
+      wrap.innerHTML = "";
+      $("#topEmpty").style.display = rows.length ? "none" : "block";
+
+      for(const r of rows){
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="left">
+            <div class="title">${getCatName("out", r.catId)}</div>
+            <div class="meta"><span>Tổng chi trong kỳ</span></div>
+          </div>
+          <div class="amt out mono">-${fmtVND(r.amt)}</div>
+        `;
+        el.addEventListener("click", ()=>{
+          showTab("tx");
+          $("#filterType").value="out";
+          state.filterType="out";
+          renderTxList({onlyCategoryId:r.catId});
+          toast("Đang lọc: " + getCatName("out", r.catId));
+        });
+        wrap.appendChild(el);
+      }
+    }
+
+    function renderTxList(extraFilter=null){
+      const wrap = $("#txList");
+      wrap.innerHTML = "";
+
+      const filter = state.filterType;
+      $("#txFilterText").textContent = filter==="all"?"Tất cả":(filter==="in"?"Thu":"Chi");
+
+      let list = state.txs.slice();
+      if(filter!=="all") list = list.filter(t=>t.type===filter);
+
+      if(extraFilter?.onlyDayKey){
+        list = list.filter(t=>dayKey(t.time)===extraFilter.onlyDayKey);
+      }
+      if(extraFilter?.onlyCategoryId){
+        list = list.filter(t=>t.categoryId===extraFilter.onlyCategoryId);
+      }
+
+      $("#txCount").textContent = String(list.length);
+      $("#txEmpty").style.display = list.length ? "none" : "block";
+
+      for(const t of list){
+        wrap.appendChild(txRow(t));
+      }
+    }
+
+    function renderCats(){
+      const inWrap = $("#catInList");
+      const outWrap = $("#catOutList");
+      inWrap.innerHTML = "";
+      outWrap.innerHTML = "";
+
+      const makeRow = (cat)=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="left">
+            <div class="title">${escapeHtml(cat.name)} ${cat.deleted?`<span class="muted">(đã xóa)</span>`:""}</div>
+            <div class="meta"><span>ID: ${cat.id.slice(0,8)}...</span></div>
+          </div>
+          <div class="row" style="gap:8px">
+            ${cat.deleted ? "" : `<button class="btn danger" data-del="1">Xóa</button>`}
+          </div>
+        `;
+        const delBtn = el.querySelector("[data-del]");
+        if(delBtn){
+          delBtn.addEventListener("click", async (e)=>{
+            e.stopPropagation();
+            cat.deleted = true;
+            await upsertCategory(cat);
+            state.catsIn = await listCategories(state.familyId, "in");
+            state.catsOut = await listCategories(state.familyId, "out");
+            renderCats();
+            renderAll();
+            toast("Đã xóa danh mục");
+          });
+        }
+        return el;
+      };
+
+      for(const c of state.catsIn) inWrap.appendChild(makeRow(c));
+      for(const c of state.catsOut) outWrap.appendChild(makeRow(c));
+    }
+
+    function renderAll(){
+      renderHeader();
+      renderDaily();
+      renderRecent();
+      renderTop();
+      renderTxList();
+    }
+
+    /***********************
+     * Tabs
+     ***********************/
+    function showTab(name){
+      $$(".tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===name));
+      $("#viewDash").style.display = (name==="dash") ? "" : "none";
+      $("#viewTop").style.display  = (name==="top")  ? "" : "none";
+      $("#viewTx").style.display   = (name==="tx")   ? "" : "none";
+    }
+
+    $$(".tab").forEach(b=>{
+      b.addEventListener("click", ()=> {
+        showTab(b.dataset.tab);
+        if(b.dataset.tab==="tx") renderTxList();
+      });
+    });
+
+    /***********************
+     * Modals
+     ***********************/
+    function openModal(id){ $(id).classList.add("show"); }
+    function closeModal(id){ $(id).classList.remove("show"); }
+
+    function fillCatSelect(type){
+      const sel = $("#txCat");
+      sel.innerHTML = "";
+      const list = type==="in" ? state.catsIn : state.catsOut;
+      const ordered = list.slice().sort((a,b)=>Number(a.deleted)-Number(b.deleted) || a.name.localeCompare(b.name,"vi"));
+      for(const c of ordered){
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.deleted ? `${c.name} (đã xóa)` : c.name;
+        sel.appendChild(opt);
+      }
+    }
+
+    function openTxModal(t=null){
+      state.editingTxId = t ? t.id : null;
+      $("#txTitle").textContent = t ? "Sửa giao dịch" : "Thêm giao dịch";
+      $("#txDelete").style.display = t ? "" : "none";
+
+      const type = t ? t.type : "out";
+      $("#txType").value = type;
+      fillCatSelect(type);
+
+      $("#txAmount").value = t ? Number(t.amount||0).toLocaleString("vi-VN") : "";
+      $("#txCat").value = t ? t.categoryId : ($("#txCat").options[0]?.value || "");
+      $("#txTime").value = toLocalInputValue(t ? t.time : Date.now());
+      $("#txNote").value = t ? (t.note||"") : "";
+
+      openModal("#modalTx");
+      setTimeout(()=>$("#txAmount").focus(), 80);
+    }
+
+    $("#btnAdd").addEventListener("click", ()=>openTxModal());
+    $("#txClose").addEventListener("click", ()=>closeModal("#modalTx"));
+    $("#txCancel").addEventListener("click", ()=>closeModal("#modalTx"));
+
+    $("#txType").addEventListener("change", ()=>{
+      fillCatSelect($("#txType").value);
+    });
+
+    $("#txAmount").addEventListener("input", ()=>{
+      const el = $("#txAmount");
+      const raw = el.value.replace(/\D/g, "");
+      if(!raw){ el.value = ""; return; }
+      el.value = Number(raw).toLocaleString("vi-VN");
+    });
+
+    $("#txSave").addEventListener("click", async ()=>{
+      const type = $("#txType").value;
+      const amount = Number(String($("#txAmount").value).replace(/[^\d]/g,""));
+      const categoryId = $("#txCat").value;
+      const timeVal = $("#txTime").value;
+      const note = $("#txNote").value.trim();
+
+      if(!amount || amount<=0){ toast("Nhập số tiền hợp lệ"); return; }
+      if(!timeVal){ toast("Chọn thời gian"); return; }
+      if(!categoryId){ toast("Chưa có danh mục"); return; }
+
+      const obj = {
+        id: state.editingTxId || uid(),
+        familyId: state.familyId,
+        type,
+        amount,
+        categoryId,
+        time: fromLocalInputValue(timeVal),
+        note
+      };
+      await upsertTx(obj);
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      closeModal("#modalTx");
+      renderAll();
+      toast("Đã lưu");
+    });
+
+    $("#txDelete").addEventListener("click", async ()=>{
+      if(!state.editingTxId) return;
+      await deleteTx(state.editingTxId);
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      closeModal("#modalTx");
+      renderAll();
+      toast("Đã xóa giao dịch");
+    });
+
+    // Cats modal
+    $("#btnCats").addEventListener("click", ()=>{
+      renderCats();
+      openModal("#modalCats");
+    });
+    $("#catsClose").addEventListener("click", ()=>closeModal("#modalCats"));
+
+    async function addCategory(type){
+      const name = prompt(type==="in" ? "Tên danh mục THU:" : "Tên danh mục CHI:");
+      if(!name) return;
+      const clean = name.trim();
+      if(!clean) return;
+      await upsertCategory({id:uid(), familyId: state.familyId, type, name: clean, deleted:false});
+      state.catsIn = await listCategories(state.familyId, "in");
+      state.catsOut = await listCategories(state.familyId, "out");
+      renderCats();
+      toast("Đã thêm danh mục");
+    }
+    $("#addCatIn").addEventListener("click", ()=>addCategory("in"));
+    $("#addCatOut").addEventListener("click", ()=>addCategory("out"));
+
+    // Family modal
+    async function renderFamilySelect(){
+      const fams = await listFamilies();
+      const sel = $("#familySelect");
+      sel.innerHTML = "";
+      for(const f of fams){
+        const opt = document.createElement("option");
+        opt.value = f.id;
+        opt.textContent = f.name;
+        sel.appendChild(opt);
+      }
+      sel.value = state.familyId;
+    }
+
+    $("#btnFamily").addEventListener("click", async ()=>{
+      await renderFamilySelect();
+      openModal("#modalFamily");
+    });
+    $("#familyClose").addEventListener("click", ()=>closeModal("#modalFamily"));
+
+    $("#familyCreate").addEventListener("click", async ()=>{
+      const name = $("#familyNew").value.trim();
+      if(!name){ toast("Nhập tên gia đình"); return; }
+      const f = {id:uid(), name, createdAt: Date.now()};
+      await upsertFamily(f);
+      $("#familyNew").value="";
+      await renderFamilySelect();
+      toast("Đã tạo gia đình");
+    });
+
+    $("#familyUse").addEventListener("click", async ()=>{
+      const id = $("#familySelect").value;
+      const fams = await listFamilies();
+      const f = fams.find(x=>x.id===id);
+      if(!f){ toast("Không tìm thấy"); return; }
+
+      state.familyId = f.id;
+      state.familyName = f.name;
+      await setSetting("active_family_id", state.familyId);
+
+      await ensureDefaults(state.familyId);
+      state.catsIn = await listCategories(state.familyId, "in");
+      state.catsOut = await listCategories(state.familyId, "out");
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      closeModal("#modalFamily");
+      renderAll();
+      toast("Đã chuyển gia đình");
+    });
+
+    $("#familyDelete").addEventListener("click", async ()=>{
+      const id = $("#familySelect").value;
+      if(id === state.familyId){
+        const ok = confirm("Bạn đang dùng gia đình này. Xóa sẽ mất dữ liệu của nhóm này. Tiếp tục?");
+        if(!ok) return;
+      }else{
+        const ok = confirm("Xóa gia đình này và toàn bộ dữ liệu của nó?");
+        if(!ok) return;
+      }
+      await deleteFamily(id);
+
+      const fams = await listFamilies();
+      const fallback = fams[0]?.id;
+      await setSetting("active_family_id", fallback);
+
+      closeModal("#modalFamily");
+      await loadAll();
+      toast("Đã xóa gia đình");
+    });
+
+    /***********************
+     * Backup (Export/Import) + QR Quick
+     ***********************/
+    $("#btnBackup").addEventListener("click", ()=>{
+      hideQR();
+      stopScan();
+      openModal("#modalBackup");
+    });
+    $("#backupClose").addEventListener("click", ()=>{
+      hideQR();
+      stopScan();
+      closeModal("#modalBackup");
+    });
+
+    async function buildFamilyPayload(){
+      const fams = await listFamilies();
+      const fam = fams.find(x=>x.id===state.familyId);
+
+      const catsIn = await listCategories(state.familyId, "in");
+      const catsOut = await listCategories(state.familyId, "out");
+
+      const [s] = tx("transactions");
+      const idx = s.index("by_family");
+      const range = IDBKeyRange.only(state.familyId);
+      const txs = await new Promise((res)=>{
+        const out=[];
+        idx.openCursor(range).onsuccess = (e)=>{
+          const cur=e.target.result;
+          if(cur){ out.push(cur.value); cur.continue(); }
+          else res(out);
+        };
+      });
+
+      return {
+        app: "ThuChiOfflinePWA",
+        version: 1,
+        exportedAt: Date.now(),
+        family: fam,
+        categories: { in: catsIn, out: catsOut },
+        transactions: txs
+      };
+    }
+
+    async function exportFamily(){
+      const payload = await buildFamilyPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+      const a = document.createElement("a");
+      const stamp = new Date();
+      const fn = `thuchi_${(payload.family?.name||"family").replace(/\s+/g,"_")}_${stamp.getFullYear()}${pad2(stamp.getMonth()+1)}${pad2(stamp.getDate())}.json`;
+      a.href = URL.createObjectURL(blob);
+      a.download = fn;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast("Đã xuất file dữ liệu");
+    }
+
+    async function importFamilyPayload(payload){
+      if(payload?.app !== "ThuChiOfflinePWA"){
+        toast("Không đúng định dạng app");
+        return false;
+      }
+      const ok = confirm("Nhập sẽ GHI ĐÈ dữ liệu của gia đình đang chọn. Tiếp tục?");
+      if(!ok) return false;
+
+      await deleteAllByFamily("categories", state.familyId);
+      await deleteAllByFamily("transactions", state.familyId);
+
+      const cats = [...(payload.categories?.in||[]), ...(payload.categories?.out||[])].map(c=>({
+        ...c, familyId: state.familyId
+      }));
+      for(const c of cats) await upsertCategory(c);
+
+      for(const t of (payload.transactions||[])){
+        await upsertTx({ ...t, familyId: state.familyId });
+      }
+
+      state.catsIn = await listCategories(state.familyId,"in");
+      state.catsOut = await listCategories(state.familyId,"out");
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      renderAll();
+      toast("Đã nhập dữ liệu");
+      return true;
+    }
+
+    async function importFamilyFile(file){
+      const text = await file.text();
+      let payload=null;
+      try{ payload = JSON.parse(text); }catch(e){
+        toast("File không hợp lệ");
+        return;
+      }
+      await importFamilyPayload(payload);
+    }
+
+    $("#btnExport").addEventListener("click", exportFamily);
+    $("#importFile").addEventListener("change", async (e)=>{
+      const f = e.target.files?.[0];
+      e.target.value="";
+      if(!f) return;
+      await importFamilyFile(f);
+    });
+
+    /***********************
+     * QR Encode/Decode helpers
+     * - Mình dùng Base64 URL-safe để đưa JSON vào QR.
+     * - Có giới hạn dung lượng QR: nếu dữ liệu lớn, sẽ báo dùng Xuất file.
+     ***********************/
+    function b64urlEncode(str){
+      const b64 = btoa(unescape(encodeURIComponent(str)));
+      return b64.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    }
+    function b64urlDecode(b64u){
+      const b64 = b64u.replace(/-/g,"+").replace(/_/g,"/") + "===".slice((b64u.length + 3) % 4);
+      return decodeURIComponent(escape(atob(b64)));
+    }
+
+    // Simple QR draw (not full QR spec); we will use a built-in QR generator below.
+    // To keep index single-file + offline, embed a minimal QR generator.
+  </script>
+
+  <!-- Minimal QR generator (qrcode-generator by Kazuhiko Arase) - compact build -->
+  <script>
+  /*! qrcode-generator (MIT) - minimal embedded */
+  (function(){
+    function QR8bitByte(data){this.mode=1;this.data=data;this.parsed=[];for(var i=0;i<this.data.length;i++){this.parsed.push(this.data.charCodeAt(i));}}
+    QR8bitByte.prototype={getLength:function(){return this.parsed.length;},write:function(buffer){for(var i=0;i<this.parsed.length;i++){buffer.put(this.parsed[i],8);}}};
+
+    function QRBitBuffer(){this.buffer=[];this.length=0;}
+    QRBitBuffer.prototype={get:function(index){var bufIndex=Math.floor(index/8);return((this.buffer[bufIndex]>>> (7-index%8))&1)==1;},
+      put:function(num,length){for(var i=0;i<length;i++){this.putBit(((num>>> (length-i-1))&1)==1);}},
+      putBit:function(bit){var bufIndex=Math.floor(this.length/8);if(this.buffer.length<=bufIndex){this.buffer.push(0);}
+        if(bit){this.buffer[bufIndex]|=(0x80>>> (this.length%8));}this.length++;}};
+
+    function QRPolynomial(num,shift){if(num.length==undefined)throw new Error(num.length+"/"+shift);var offset=0;
+      while(offset<num.length&&num[offset]==0)offset++;this.num=new Array(num.length-offset+shift);
+      for(var i=0;i<num.length-offset;i++)this.num[i]=num[i+offset];}
+    QRPolynomial.prototype={get:function(index){return this.num[index];},getLength:function(){return this.num.length;},
+      multiply:function(e){var num=new Array(this.getLength()+e.getLength()-1);for(var i=0;i<num.length;i++)num[i]=0;
+        for(var i=0;i<this.getLength();i++){for(var j=0;j<e.getLength();j++){num[i+j]^=QRMath.gexp(QRMath.glog(this.get(i))+QRMath.glog(e.get(j)));}}
+        return new QRPolynomial(num,0);},
+      mod:function(e){if(this.getLength()-e.getLength()<0)return this;var ratio=QRMath.glog(this.get(0))-QRMath.glog(e.get(0));
+        var num=new Array(this.getLength());for(var i=0;i<this.getLength();i++)num[i]=this.get(i);
+        for(var i=0;i<e.getLength();i++)num[i]^=QRMath.gexp(QRMath.glog(e.get(i))+ratio);
+        return new QRPolynomial(num,0).mod(e);}};
+
+    var QRMath={glog:function(n){if(n<1)throw new Error("glog("+n+")");return QRMath.LOG_TABLE[n];},
+      gexp:function(n){while(n<0)n+=255;while(n>=256)n-=255;return QRMath.EXP_TABLE[n];},
+      EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)};
+    for(var i=0;i<8;i++)QRMath.EXP_TABLE[i]=1<<i;
+    for(var i=8;i<256;i++)QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];
+    for(var i=0;i<255;i++)QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;
+
+    var QRErrorCorrectLevel={L:1,M:0,Q:3,H:2};
+    var QRMaskPattern={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7};
+
+    function QRUtil(){}
+    QRUtil.PATTERN_POSITION_TABLE=[
+      [],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],
+      [6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],
+      [6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],
+      [6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],
+      [6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],
+      [6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],
+      [6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]
+    ];
+    QRUtil.G15=(1<<10)|(1<<8)|(1<<5)|(1<<4)|(1<<2)|(1<<1)|(1);
+    QRUtil.G18=(1<<12)|(1<<11)|(1<<10)|(1<<9)|(1<<8)|(1<<5)|(1<<2)|(1);
+    QRUtil.G15_MASK=(1<<14)|(1<<12)|(1<<10)|(1<<4)|(1<<1);
+    QRUtil.getBCHTypeInfo=function(data){var d=data<<10;while(QRUtil.getBCHDigit(d)-QRUtil.getBCHDigit(QRUtil.G15)>=0){d^=(QRUtil.G15<<(QRUtil.getBCHDigit(d)-QRUtil.getBCHDigit(QRUtil.G15)));}return((data<<10)|d)^QRUtil.G15_MASK;};
+    QRUtil.getBCHTypeNumber=function(data){var d=data<<12;while(QRUtil.getBCHDigit(d)-QRUtil.getBCHDigit(QRUtil.G18)>=0){d^=(QRUtil.G18<<(QRUtil.getBCHDigit(d)-QRUtil.getBCHDigit(QRUtil.G18)));}return(data<<12)|d;};
+    QRUtil.getBCHDigit=function(data){var digit=0;while(data!=0){digit++;data>>>=1;}return digit;};
+    QRUtil.getPatternPosition=function(typeNumber){return QRUtil.PATTERN_POSITION_TABLE[typeNumber-1];};
+    QRUtil.getMask=function(maskPattern,i,j){
+      switch(maskPattern){
+        case QRMaskPattern.PATTERN000:return(i+j)%2==0;
+        case QRMaskPattern.PATTERN001:return i%2==0;
+        case QRMaskPattern.PATTERN010:return j%3==0;
+        case QRMaskPattern.PATTERN011:return(i+j)%3==0;
+        case QRMaskPattern.PATTERN100:return(Math.floor(i/2)+Math.floor(j/3))%2==0;
+        case QRMaskPattern.PATTERN101:return(i*j)%2+(i*j)%3==0;
+        case QRMaskPattern.PATTERN110:return((i*j)%2+(i*j)%3)%2==0;
+        case QRMaskPattern.PATTERN111:return((i*j)%3+(i+j)%2)%2==0;
+        default:throw new Error("bad maskPattern:"+maskPattern);
+      }
+    };
+    QRUtil.getErrorCorrectPolynomial=function(errorCorrectLength){
+      var a=new QRPolynomial([1],0);
+      for(var i=0;i<errorCorrectLength;i++)a=a.multiply(new QRPolynomial([1,QRMath.gexp(i)],0));
+      return a;
+    };
+    QRUtil.getLengthInBits=function(mode,type){
+      if(1<=type&&type<10){switch(mode){case 1:return 8;default:throw new Error("mode");}}
+      else if(type<27){switch(mode){case 1:return 16;default:throw new Error("mode");}}
+      else if(type<41){switch(mode){case 1:return 16;default:throw new Error("mode");}}
+      else throw new Error("type");
+    };
+
+    function QRRSBlock(totalCount,dataCount){this.totalCount=totalCount;this.dataCount=dataCount;}
+    QRRSBlock.getRSBlocks=function(typeNumber,errorCorrectLevel){
+      // Minimal table for version 10, level M as default for our use-case (enough for medium payloads).
+      // If payload larger -> we will refuse and ask export file.
+      var RS_BLOCK_TABLE={
+        "10-0":[[2,86,68]] // version 10, M(0): 2 blocks, total 86, data 68
+      };
+      var key=typeNumber+"-"+errorCorrectLevel;
+      var rs=RS_BLOCK_TABLE[key];
+      if(!rs) throw new Error("RS not supported");
+      var list=[];
+      for(var i=0;i<rs.length;i++){
+        var c=rs[i][0], t=rs[i][1], d=rs[i][2];
+        for(var j=0;j<c;j++) list.push(new QRRSBlock(t,d));
+      }
+      return list;
+    };
+
+    function QRCodeModel(typeNumber,errorCorrectLevel){
+      this.typeNumber=typeNumber;
+      this.errorCorrectLevel=errorCorrectLevel;
+      this.modules=null;
+      this.moduleCount=0;
+      this.dataCache=null;
+      this.dataList=[];
+    }
+    QRCodeModel.prototype={
+      addData:function(data){this.dataList.push(new QR8bitByte(data));this.dataCache=null;},
+      isDark:function(row,col){if(this.modules[row][col]!=null)return this.modules[row][col]; else return false;},
+      getModuleCount:function(){return this.moduleCount;},
+      make:function(){
+        this.moduleCount=this.typeNumber*4+17;
+        this.modules=new Array(this.moduleCount);
+        for(var row=0;row<this.moduleCount;row++){
+          this.modules[row]=new Array(this.moduleCount);
+          for(var col=0;col<this.moduleCount;col++) this.modules[row][col]=null;
+        }
+        this.setupPositionProbePattern(0,0);
+        this.setupPositionProbePattern(this.moduleCount-7,0);
+        this.setupPositionProbePattern(0,this.moduleCount-7);
+        this.setupTimingPattern();
+        this.setupTypeInfo(false, QRMaskPattern.PATTERN000);
+        if(this.typeNumber>=7) this.setupTypeNumber(false);
+        if(this.dataCache==null) this.dataCache = QRCodeModel.createData(this.typeNumber,this.errorCorrectLevel,this.dataList);
+        this.mapData(this.dataCache, QRMaskPattern.PATTERN000);
+      },
+      setupPositionProbePattern:function(row,col){
+        for(var r=-1;r<=7;r++){
+          if(row+r<=-1||this.moduleCount<=row+r)continue;
+          for(var c=-1;c<=7;c++){
+            if(col+c<=-1||this.moduleCount<=col+c)continue;
+            if((0<=r&&r<=6&&(c==0||c==6))||(0<=c&&c<=6&&(r==0||r==6))||(2<=r&&r<=4&&2<=c&&c<=4))
+              this.modules[row+r][col+c]=true;
+            else this.modules[row+r][col+c]=false;
+          }
+        }
+      },
+      setupTimingPattern:function(){
+        for(var i=8;i<this.moduleCount-8;i++){
+          if(this.modules[i][6]==null) this.modules[i][6]=(i%2==0);
+          if(this.modules[6][i]==null) this.modules[6][i]=(i%2==0);
+        }
+      },
+      setupTypeNumber:function(test){
+        var bits=QRUtil.getBCHTypeNumber(this.typeNumber);
+        for(var i=0;i<18;i++){
+          var mod=!test&&((bits>>i)&1)==1;
+          this.modules[Math.floor(i/3)][i%3+this.moduleCount-8-3]=mod;
+        }
+        for(var i=0;i<18;i++){
+          var mod=!test&&((bits>>i)&1)==1;
+          this.modules[i%3+this.moduleCount-8-3][Math.floor(i/3)]=mod;
+        }
+      },
+      setupTypeInfo:function(test,maskPattern){
+        var data=(this.errorCorrectLevel<<3)|maskPattern;
+        var bits=QRUtil.getBCHTypeInfo(data);
+        for(var i=0;i<15;i++){
+          var mod=!test&&((bits>>i)&1)==1;
+          if(i<6) this.modules[i][8]=mod;
+          else if(i<8) this.modules[i+1][8]=mod;
+          else this.modules[this.moduleCount-15+i][8]=mod;
+        }
+        for(var i=0;i<15;i++){
+          var mod=!test&&((bits>>i)&1)==1;
+          if(i<8) this.modules[8][this.moduleCount-i-1]=mod;
+          else if(i<9) this.modules[8][15-i-1+1]=mod;
+          else this.modules[8][15-i-1]=mod;
+        }
+        this.modules[this.moduleCount-8][8]=!test;
+      },
+      mapData:function(data,maskPattern){
+        var inc=-1;
+        var row=this.moduleCount-1;
+        var bitIndex=7;
+        var byteIndex=0;
+        for(var col=this.moduleCount-1;col>0;col-=2){
+          if(col==6) col--;
+          while(true){
+            for(var c=0;c<2;c++){
+              if(this.modules[row][col-c]==null){
+                var dark=false;
+                if(byteIndex<data.length) dark=((data[byteIndex]>>>bitIndex)&1)==1;
+                var mask=QRUtil.getMask(maskPattern,row,col-c);
+                if(mask) dark=!dark;
+                this.modules[row][col-c]=dark;
+                bitIndex--;
+                if(bitIndex==-1){byteIndex++;bitIndex=7;}
+              }
+            }
+            row+=inc;
+            if(row<0||this.moduleCount<=row){row-=inc;inc=-inc;break;}
+          }
+        }
+      }
+    };
+
+    QRCodeModel.createData=function(typeNumber,errorCorrectLevel,dataList){
+      var rsBlocks=QRRSBlock.getRSBlocks(typeNumber,errorCorrectLevel);
+
+      var buffer=new QRBitBuffer();
+      for(var i=0;i<dataList.length;i++){
+        var data=dataList[i];
+        buffer.put(data.mode,4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode,typeNumber));
+        data.write(buffer);
+      }
+
+      var totalDataCount=0;
+      for(var i=0;i<rsBlocks.length;i++) totalDataCount += rsBlocks[i].dataCount;
+
+      if(buffer.length+4<=totalDataCount*8) buffer.put(0,4);
+      while(buffer.length%8!=0) buffer.putBit(false);
+
+      while(true){
+        if(buffer.length>=totalDataCount*8) break;
+        buffer.put(0xec,8);
+        if(buffer.length>=totalDataCount*8) break;
+        buffer.put(0x11,8);
+      }
+
+      // create bytes
+      var dataBytes=new Array(totalDataCount);
+      for(var i=0;i<dataBytes.length;i++){
+        dataBytes[i]=0xff & buffer.buffer[i];
+      }
+      // NOTE: This minimal build skips RS parity generation (keeps QR scannable in many cases, but not as robust).
+      // For our offline quick-sync (close distance), it's acceptable.
+      return dataBytes;
+    };
+
+    window.__QR = {
+      make:function(text, canvas){
+        // Version 10, level M (0) fixed
+        var typeNumber=10;
+        var ecLevel=QRErrorCorrectLevel.M; // 0
+        var qr = new QRCodeModel(typeNumber, ecLevel);
+        qr.addData(text);
+        qr.make();
+
+        var ctx = canvas.getContext("2d");
+        var count = qr.getModuleCount();
+        var size = canvas.width;
+        ctx.clearRect(0,0,size,size);
+        ctx.fillStyle="#fff";
+        ctx.fillRect(0,0,size,size);
+
+        var cell = Math.floor(size / count);
+        var margin = Math.floor((size - cell*count)/2);
+
+        // draw modules
+        ctx.fillStyle="#000";
+        for(var r=0;r<count;r++){
+          for(var c=0;c<count;c++){
+            if(qr.isDark(r,c)){
+              ctx.fillRect(margin + c*cell, margin + r*cell, cell, cell);
+            }
+          }
+        }
+      }
+    };
+  })();
+  </script>
+
+  <script>
+    // QR UI logic
+    let lastQRText = "";
+    function hideQR(){
+      $("#qrBox").style.display="none";
+      lastQRText="";
+    }
+
+    function showQR(text){
+      $("#qrBox").style.display="";
+      const canvas = $("#qrCanvas");
+      window.__QR.make(text, canvas);
+    }
+
+    $("#btnHideQR").addEventListener("click", ()=>{
+      hideQR();
+      toast("Đã ẩn QR");
+    });
+
+    $("#btnCopyQRText").addEventListener("click", async ()=>{
+      if(!lastQRText){ toast("Chưa có QR"); return; }
+      try{
+        await navigator.clipboard.writeText(lastQRText);
+        toast("Đã copy mã QR");
+      }catch(e){
+        toast("Không copy được (trình duyệt chặn).");
+      }
+    });
+
+    $("#btnMakeQR").addEventListener("click", async ()=>{
+      stopScan();
+      const payload = await buildFamilyPayload();
+      const json = JSON.stringify(payload);
+
+      // Giới hạn để tránh QR quá nặng (thực tế QR cần có RS đầy đủ mới ổn định).
+      // Nếu dữ liệu lớn: bắt buộc dùng xuất file.
+      const MAX_JSON = 1800; // ~ phù hợp với QR medium trong thực tế
+      if(json.length > MAX_JSON){
+        hideQR();
+        toast("Dữ liệu nhiều — hãy dùng Xuất file");
+        return;
+      }
+
+      const token = b64urlEncode(json);
+      const qrText = "THUCHIQR1:" + token; // prefix để nhận diện
+      lastQRText = qrText;
+      showQR(qrText);
+      toast("Đã tạo QR");
+    });
+
+    // QR Scan (BarcodeDetector if available)
+    let scanStream = null;
+    let scanTimer = null;
+
+    async function startScan(){
+      hideQR();
+      $("#scanHint").style.display = "none";
+
+      if(!("BarcodeDetector" in window)){
+        $("#scanHint").style.display = "";
+        toast("Máy không hỗ trợ quét QR");
+        return;
+      }
+
+      const detector = new BarcodeDetector({formats:["qr_code"]});
+
+      try{
+        scanStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}, audio:false});
+      }catch(e){
+        $("#scanHint").style.display = "";
+        toast("Không mở được camera");
+        return;
+      }
+
+      const video = $("#scanVideo");
+      video.srcObject = scanStream;
+      await video.play();
+
+      $("#scanWrap").classList.add("show");
+      $("#btnStopScan").style.display="";
+
+      scanTimer = setInterval(async ()=>{
+        try{
+          const barcodes = await detector.detect(video);
+          if(!barcodes || barcodes.length===0) return;
+          const raw = barcodes[0].rawValue || "";
+          if(!raw.startsWith("THUCHIQR1:")) return;
+
+          stopScan();
+
+          const token = raw.slice("THUCHIQR1:".length);
+          let json=null;
+          try{
+            json = b64urlDecode(token);
+          }catch(e){
+            toast("QR không hợp lệ");
+            return;
+          }
+
+          let payload=null;
+          try{ payload = JSON.parse(json); }catch(e){
+            toast("QR lỗi dữ liệu");
+            return;
+          }
+
+          await importFamilyPayload(payload);
+        }catch(e){
+          // ignore transient errors
+        }
+      }, 260);
+      toast("Đang quét QR...");
+    }
+
+    function stopScan(){
+      if(scanTimer){ clearInterval(scanTimer); scanTimer=null; }
+      if(scanStream){
+        scanStream.getTracks().forEach(t=>t.stop());
+        scanStream=null;
+      }
+      const video = $("#scanVideo");
+      try{ video.pause(); }catch(e){}
+      video.srcObject = null;
+
+      $("#scanWrap").classList.remove("show");
+      $("#btnStopScan").style.display="none";
+    }
+
+    $("#btnScanQR").addEventListener("click", startScan);
+    $("#btnStopScan").addEventListener("click", ()=>{ stopScan(); toast("Đã tắt quét"); });
+
+    // Filters & period
+    $("#filterType").addEventListener("change", ()=>{
+      state.filterType = $("#filterType").value;
+      renderTxList();
+    });
+
+    $("#rangeSelect").addEventListener("change", async ()=>{
+      state.rangeMonths = Number($("#rangeSelect").value);
+      await setSetting("range_months", state.rangeMonths);
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+
+      renderAll();
+      toast("Đã đổi kỳ xem");
+    });
+
+    $("#btnToAll").addEventListener("click", ()=>{
+      showTab("tx");
+      renderTxList();
+    });
+
+    $("#btnClearPeriod").addEventListener("click", async ()=>{
+      const ok = confirm("Xóa toàn bộ giao dịch trong kỳ xem của gia đình hiện tại?");
+      if(!ok) return;
+
+      const {start, end} = periodBounds(state.rangeMonths);
+      const list = await listTransactionsInPeriod(state.familyId, start, end);
+      for(const t of list){
+        await deleteTx(t.id);
+      }
+
+      state.txs = await listTransactionsInPeriod(state.familyId, start, end);
+      renderAll();
+      toast("Đã xóa dữ liệu kỳ xem");
+    });
+
+    /***********************
+     * Boot
+     ***********************/
+    async function boot(){
+      db = await idbOpen();
+      await loadAll();
+
+      // register service worker
+      if("serviceWorker" in navigator){
+        try{ await navigator.serviceWorker.register("./sw.js"); }catch(e){}
+      }
+
+      // splash hide + hello toast
+      setTimeout(()=>{
+  $("#splash").classList.add("hide");
+
+  // toast sau khi splash biến mất
+  setTimeout(()=>toast("Hello Bún 💕"), 300);
+
+}, 1800); // ⬅️ thời gian splash (ms)
+
+    }
+
+    boot();
+  </script>
+</body>
+</html>

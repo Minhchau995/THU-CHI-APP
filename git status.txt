@@ -1,0 +1,4 @@
+git status
+git add .
+git commit -m "Fix image path for PWA + update icon"
+git push
